@@ -1,0 +1,159 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Eksplorasi Barisan Aritmetika</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: satu kolom kerja berisi tab; kontrol di atas, tabel data di bawah, grafik opsional. */
+:root{--bg:#f6f7f4;--panel:#ffffff;--fg:#1d2a2a;--mute:#5c6b6b;--line:#d5dbd7;--accent:#0b6e6e;--accent-soft:#d9eeee;--hi:#fff1c2;--hi-line:#d8a600;--bad:#b3261e;--ok:#1b7a3a;--font:ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a1a;--panel:#1a2424;--fg:#e4ecea;--mute:#9db0ad;--line:#2f3f3e;--accent:#58c4c0;--accent-soft:#1d3a3a;--hi:#3d3410;--hi-line:#e0b72e;--bad:#ff8a80;--ok:#6fd48e;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121a1a;--panel:#1a2424;--fg:#e4ecea;--mute:#9db0ad;--line:#2f3f3e;--accent:#58c4c0;--accent-soft:#1d3a3a;--hi:#3d3410;--hi-line:#e0b72e;--bad:#ff8a80;--ok:#6fd48e;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.5;padding-block:20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-size:1.4rem;margin:0;text-wrap:balance}
+h2{font-size:1rem;margin:0 0 8px}
+.sub{color:var(--mute);margin:2px 0 0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{font:inherit;padding:8px 14px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:6px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+:focus-visible{outline:3px solid var(--hi-line);outline-offset:2px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.task{background:var(--accent-soft);border-radius:6px;padding:10px 12px;margin:0}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.ctrl label{display:flex;flex-direction:column;gap:4px;font-weight:600}
+.ctrl output{font-family:var(--mono);color:var(--accent);font-size:1.15rem}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{background:var(--accent-soft);text-align:center;position:sticky;top:0}
+td.l{text-align:left;white-space:normal;font-family:var(--mono);font-size:.9rem}
+tr.hi td{background:var(--hi);box-shadow:inset 0 -1px 0 var(--hi-line)}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card b{font-size:1.05rem}
+.terms{display:flex;gap:6px;flex-wrap:wrap;font-family:var(--mono)}
+.terms span{background:var(--accent-soft);padding:4px 9px;border-radius:4px}
+.diff{margin-top:4px;color:var(--mute);font-family:var(--mono);font-size:.9rem;min-height:1.4em}.diff-inputs{display:flex;gap:6px;flex-wrap:wrap}.diff-inputs label{display:flex;flex-direction:column;gap:3px;font-size:.82rem;color:var(--mute)}.diff-inputs input[type=number]{width:72px}.diff-feedback{font-weight:600;min-height:1.4em}
+button.act{font:inherit;padding:7px 12px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:6px;cursor:pointer;align-self:flex-start}
+button.act:hover{background:var(--accent-soft)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.row label{display:flex;flex-direction:column;gap:4px;font-weight:600}
+input[type=number]{font:inherit;width:110px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+.res{min-height:1.5em;font-weight:600}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+svg{max-width:100%;height:auto;display:block}
+.note{color:var(--mute);font-size:.9rem;margin:0}
+</style>
+<main>
+<header>
+<h1>Eksplorasi Barisan Aritmetika</h1>
+<p class="sub">Kumpulkan data, temukan polanya, lalu uji rumus buatanmu sendiri. Halaman ini sengaja tidak menampilkan rumus suku ke-n.</p>
+</header>
+<div class="tabs" role="tablist" aria-label="Kegiatan">
+<button class="tab" role="tab" id="t1" aria-selected="true" aria-controls="p1">Eksplorasi 1: Empat barisan</button>
+<button class="tab" role="tab" id="t2" aria-selected="false" aria-controls="p2">Eksplorasi 2: Geser a dan b</button>
+<button class="tab" role="tab" id="t3" aria-selected="false" aria-controls="p3">Verifikasi rumusmu</button>
+</div>
+
+<section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+<p class="task"><b>Tugas:</b> Isi Tabel 1 pada LKPD. Hitung sendiri selisih antarsuku untuk P, Q, R, dan S. Barisan mana yang selisihnya selalu sama?</p>
+<div class="grid4" id="seqs"></div>
+<p class="note">Hitung selisih setiap dua suku yang berurutan, isi ketiga kotak, lalu klik “Periksa jawaban”. Hasil selisih baru akan ditampilkan setelah jawaban diperiksa.</p>
+</section>
+
+<section class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+<p class="task"><b>Tugas:</b> Isi Tabel 2 pada LKPD untuk a = 5, b = 3 dan a = 20, b = −4. Lihat bentuk penjumlahannya, lalu hitung berapa kali b ditambahkan pada setiap suku.</p>
+<div class="ctrl">
+<label>Suku pertama (a): <output id="oa">12</output><input type="range" id="ra" min="-20" max="50" step="1" value="12"></label>
+<label>Beda (b): <output id="ob">5</output><input type="range" id="rb" min="-10" max="10" step="1" value="5"></label>
+<label>Tandai suku ke-n: <output id="on">6</output><input type="range" id="rn" min="1" max="30" step="1" value="6"></label>
+</div>
+<div class="tw" style="max-height:420px;overflow-y:auto"><table>
+<thead><tr><th>n</th><th>Nilai suku</th><th>Selisih dengan suku sebelumnya</th><th>Bentuk penjumlahan</th></tr></thead>
+<tbody id="tb"></tbody></table></div>
+<div class="row"><button class="act" id="gbtn" type="button" aria-expanded="false">Tampilkan titik (n, nilai suku) — pengayaan</button></div>
+<div id="gwrap" hidden class="tw" style="padding:8px"><svg id="gr" viewBox="0 0 640 300" role="img" aria-label="Grafik titik nilai suku terhadap nomor suku"></svg></div>
+</section>
+
+<section class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+<p class="task"><b>Tugas:</b> Hitung nilai suku dengan rumus dugaan kelompokmu, lalu masukkan hasilnya. Halaman akan mencocokkannya dengan data barisan.</p>
+<div class="ctrl">
+<label>a: <input type="number" id="va" value="12"></label>
+<label>b: <input type="number" id="vb" value="5"></label>
+<label>n (1 sampai 200): <input type="number" id="vn" value="25" min="1" max="200"></label>
+<label>Hasil dari rumusmu: <input type="number" id="vx" placeholder="mis. 132"></label>
+</div>
+<div class="row"><button class="act" id="chk" type="button">Cek hasil</button></div>
+<div class="res" id="vres" aria-live="polite"></div>
+<p class="note">Jika tidak cocok, kembali ke Eksplorasi 2, hitung banyak b pada suku ke-n, dan perbaiki dugaanmu. Coba juga dengan b negatif dan dengan barisan R dari Eksplorasi 1.</p>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const tabs=['t1','t2','t3'];
+tabs.forEach((t,i)=>$(t).addEventListener('click',()=>{tabs.forEach((x,j)=>{$(x).setAttribute('aria-selected',i===j);$('p'+(j+1)).hidden=i!==j});}));
+// Eksplorasi 1
+const S={P:[4,7,10,13,16],Q:[20,17,14,11,8],R:[3,6,12,24,48],S:[9,9,9,9,9]};
+const box=$('seqs');
+Object.keys(S).forEach(k=>{
+ const c=document.createElement('div');c.className='card';
+ c.innerHTML='<b>Barisan '+k+'</b><div class="terms">'+S[k].slice(0,4).map(v=>'<span>'+v+'</span>').join('')+'<span>…</span></div><p class="note">Isi selisih antar suku berurutan:</p><div class="diff-inputs">'+[1,2,3].map((n)=>'<label>Selisih '+n+'<input type="number" id="i'+k+n+'" aria-label="Selisih '+n+' barisan '+k+'" placeholder="?"></label>').join('')+'</div><button class="act" type="button">Periksa jawaban</button><div class="diff-feedback" id="f'+k+'" aria-live="polite"></div><div class="diff" id="d'+k+'"></div>';
+ c.querySelector('button').addEventListener('click',()=>{
+  const v=S[k].slice(0,4),d=[v[1]-v[0],v[2]-v[1],v[3]-v[2]];
+  const inputs=[1,2,3].map(n=>$('i'+k+n).value.trim());
+  const feedback=$('f'+k),result=$('d'+k);
+  if(inputs.some(x=>x==='')){feedback.className='diff-feedback bad';feedback.textContent='Lengkapi ketiga isian selisih terlebih dahulu.';result.textContent='';return;}
+  const answers=inputs.map(Number),correct=answers.every((x,i)=>x===d[i]);
+  feedback.className='diff-feedback '+(correct?'ok':'bad');
+  feedback.textContent=correct?'Benar! Semua selisih yang kamu isi tepat.':'Belum tepat. Perhatikan kembali pengurangan antara dua suku yang berurutan.';
+  const same=d.every(x=>x===d[0]);
+  result.textContent='Selisih yang benar: '+d.join(', ')+(same?' (tetap)':' (tidak tetap)');
+ });box.appendChild(c);});
+// Eksplorasi 2
+const f=x=>x<0?'('+String(x).replace('-','−')+')':String(x);
+function form(a,b,n){
+ if(n===1)return String(a);
+ const bb=f(b);
+ if(n<=8)return String(a).replace('-','−')+(' + '+bb).repeat(n-1);
+ return String(a).replace('-','−')+' + '+bb+' + '+bb+' + '+bb+' + … + '+bb+' + '+bb;
+}
+function render(){
+ const a=+$('ra').value,b=+$('rb').value,n=+$('rn').value;
+ $('oa').textContent=a;$('ob').textContent=b;$('on').textContent=n;
+ let v=a,h='';const pts=[];
+ for(let i=1;i<=30;i++){
+  if(i>1)v+=b;pts.push([i,v]);
+  h+='<tr'+(i===n?' class="hi"':'')+'><td>'+i+'</td><td>'+v+'</td><td>'+(i===1?'–':b)+'</td><td class="l">'+form(a,b,i)+'</td></tr>';
+ }
+ $('tb').innerHTML=h;
+ if(!$('gwrap').hidden)graph(pts,n);
+}
+function graph(pts,n){
+ const W=640,H=300,L=44,R=14,T=14,B=30;
+ const ys=pts.map(p=>p[1]),mn=Math.min(...ys,0),mx=Math.max(...ys,1);
+ const X=i=>L+(i-1)/29*(W-L-R),Y=v=>H-B-(v-mn)/(mx-mn)*(H-T-B);
+ let s='<g stroke="var(--line)" fill="none">';
+ for(let k=0;k<=4;k++){const v=mn+(mx-mn)*k/4;s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(v)+'" y2="'+Y(v)+'"/>';}
+ s+='</g><g fill="var(--mute)" font-size="11" font-family="ui-monospace,monospace">';
+ for(let k=0;k<=4;k++){const v=mn+(mx-mn)*k/4;s+='<text x="'+(L-6)+'" y="'+(Y(v)+4)+'" text-anchor="end">'+Math.round(v)+'</text>';}
+ [1,10,20,30].forEach(i=>{s+='<text x="'+X(i)+'" y="'+(H-10)+'" text-anchor="middle">'+i+'</text>';});
+ s+='</g>';
+ if(mn<0&&mx>0)s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(0)+'" y2="'+Y(0)+'" stroke="var(--mute)"/>';
+ pts.forEach(([i,v])=>{s+='<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="'+(i===n?6:3.5)+'" fill="'+(i===n?'var(--hi-line)':'var(--accent)')+'"/>';});
+ $('gr').innerHTML=s;
+}
+['ra','rb','rn'].forEach(i=>$(i).addEventListener('input',render));
+$('gbtn').addEventListener('click',()=>{const o=$('gwrap').hidden;$('gwrap').hidden=!o;$('gbtn').setAttribute('aria-expanded',o);render();});
+render();
+// Verifikasi
+$('chk').addEventListener('click',()=>{
+ const a=+$('va').value,b=+$('vb').value,n=Math.round(+$('vn').value),xs=$('vx').value;
+ const r=$('vres');
+ if(xs===''||!(n>=1&&n<=200)){r.className='res bad';r.textContent='Isi a, b, n (1 sampai 200), dan hasil dari rumusmu.';return;}
+ let v=a;for(let i=2;i<=n;i++)v+=b;
+ if(+xs===v){r.className='res ok';r.textContent='Cocok. Suku ke-'+n+' pada data barisan adalah '+v+'. Rumusmu bekerja untuk contoh ini; coba contoh lain.';}
+ else{r.className='res bad';r.textContent='Belum cocok. Data barisan menunjukkan suku ke-'+n+' bernilai '+v+', sedangkan hasilmu '+(+xs)+'. Periksa lagi banyak b yang ditambahkan.';}
+});
+</script>
+
+</body></html>
